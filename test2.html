@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Facebook Gallery</title>
+	<script src="js/jquery-1.11.0.min.js"></script>
+	<link rel="stylesheet" href="css/justifiedGallery.min.css" />
+	<script src="js/jquery.justifiedGallery.min.js"></script>
+</head>
+<body>
+	<script>
+
+		var url = "https://graph.facebook.com/";
+		var redriction_url = "https://graph.facebook.com/oauth/authorize?type=user_agent&client_id=621313657950322&redirect_uri=http://fs.mis.kuas.edu.tw/~s1102137130/api/test2.html&scope=user_photos";
+
+		function getUrlVars()
+		{
+		    var vars = [], hash;
+		    var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
+		    for(var i = 0; i < hashes.length; i++)
+		    {
+		        hash = hashes[i].split('=');
+		        vars.push(hash[0]);
+		        vars[hash[0]] = hash[1];
+		    }
+		    return vars;
+		}
+
+		var token = "?access_token="+ getUrlVars()["access_token"];
+
+		//alert(token);
+		if(typeof(getUrlVars()["access_token"]) ===  'undefined')
+			document.location.href = redriction_url;
+
+		//var token = "?access_token=CAAI1FNvgUHIBAE8zZATtTF1TYAEyCO9Ld5WcMhZCAWFaurRlIQjTROFqApZBZChrzycNeqwzPLvnkLFgkVZCjiGBbchNYmgShukZBpBuTTsFcW3GhBDI8Sew9Y2uwKAPPw1wr6gFKZCiMAWzl0SGyNk2yBmZCJfoCPTiQ2bfDJ3TPlTOHovOfwmkfiq8ZCf5VH5Ej3gOFM15R0gZDZD";
+		
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+	function fetch(){
+		$.getJSON(url+"me/albums"+token, function(albums_list){
+				console.log(albums_list.data.length);
+				for(var i = 0;i < albums_list.data.length;i++)
+				{
+					//console.log(albums_list.data[i].id);
+					$.getJSON( url+ albums_list.data[i].id + "/photos" +token , function( photos ) {
+						//console.log(photos.data.length);
+						for(var j = 0;j < photos.data.length;j++)
+						{
+							//console.log(photos.data[j].source);
+							//sleep(100);
+							$( "#gallery" ).append( "<a href=\""+photos.data[j].source+"\"><img src=\""+photos.data[j].source+"\"></a>" );
+						}
+
+				//$("#gallery").justifiedGallery();
+							
+					});
+				}
+
+		}).complete(function()
+		{
+			//$('#gallery').justifiedGallery();
+			//alert("test2");
+		});
+	}
+
+		/*
+		$.getJSON( url+"me/albums"+token , function( albums_list ) {
+			//console.log( "JSON Data: " + albums_list.data[0] .id);
+
+			  $.each( albums_list.data ,function( index, albums ) {
+				  //console.log( index + ": " + albums.id );
+
+				});
+			});
+
+				$.getJSON( url+ "201995183156018" + "/photos" +token , function( photos ) {
+					//console.log( "JSON Data: " + photos.data[0].id);
+					$.each( photos.data ,function( index, e ) {
+				  		console.log( index + ": " + e.id );
+				  });
+		*/
+
+	</script>
+	<h1>Facebook Gallery</h1>
+	<button id="fetch">Fetch</button>
+	<button id="justified" disabled>Justfy</button>
+	<hr>
+	<div id="gallery">
+		
+	</div>
+	<script>		
+	$('#fetch').click(function()
+			{
+				$(this).attr('disabled', true);
+				$('#justified').attr('disabled', false);
+				fetch();
+			});
+		$('#justified').click(function(){
+			//alert('test');
+				$(this).attr('disabled', 'disabled');
+			$('#gallery').justifiedGallery({rowHeight:180});
+
+			});
+		</script>
+</body>
+</html>
