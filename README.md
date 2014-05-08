@@ -1,4 +1,4 @@
-Facebook-Graph-API-Example
+Facebook Graph API Example
 ==========================
 
 This is a simple example of the using of the Graph API. 
